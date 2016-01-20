@@ -37,6 +37,8 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_Tax_PaymentFee extends Mage_Sale
         }
 
         if (!$address->getPaymentFeeAmount()) {
+            $address->setPaymentFeeTax(0);
+            $address->setBasePaymentFeeTax(0);
             return $this;
         }
 
