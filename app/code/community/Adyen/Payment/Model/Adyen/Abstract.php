@@ -221,6 +221,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
     public function sendCaptureRequest(Varien_Object $payment, $amount, $pspReference) {
         if (empty($pspReference)) {
             $this->writeLog('oops empty pspReference');
+            Adyen_Payment_Exception::throwException('No PSP reference found.');
             return $this;
         }
         $this->writeLog("sendCaptureRequest pspReference : $pspReference amount: $amount");
@@ -230,6 +231,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
     public function sendRefundRequest(Varien_Object $payment, $amount, $pspReference) {
         if (empty($pspReference)) {
             $this->writeLog('oops empty pspReference');
+            Adyen_Payment_Exception::throwException('No PSP reference found.');
             return $this;
         }
         $this->writeLog("sendRefundRequest pspReference : $pspReference amount: $amount");
@@ -239,6 +241,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
     public function SendCancelOrRefund(Varien_Object $payment, $pspReference) {
         if (empty($pspReference)) {
             $this->writeLog('oops empty pspReference');
+            Adyen_Payment_Exception::throwException('No PSP reference found.');
             return $this;
         }
         $this->writeLog("sendCancelOrRefundRequest pspReference : $pspReference");
