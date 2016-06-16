@@ -193,7 +193,8 @@
                                     <frontend_model>adyen/adminhtml_system_config_testWebserverConfiguration</frontend_model>
                                     <sort_order>120</sort_order>
                                     <show_in_default>1</show_in_default>
-                                    <show_in_website>0</show_in_website>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
                                 </ws_live_button>
                                 <capture_mode translate="label">
                                     <label>Capture Delay</label>
@@ -227,7 +228,6 @@
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
-                                    <depends><capture_mode>manual</capture_mode></depends>
                                 </payment_pre_authorized>
                                 <payment_authorized translate="label">
                                     <label>Order status: payment confirmed</label>
@@ -383,8 +383,19 @@
                                     <show_in_website>0</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </uncancelorder>
+                                <autorefundoncancel translate="label">
+                                    <label>Automatic refund when a order is canceled</label>
+                                    <tooltip>Enable/Disable automatic refund when canceling a order.</tooltip>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/autorefundoncancel</config_path>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>100</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>0</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </autorefundoncancel>
                                 <send_invoice_update_mail translate="label">
-                                    <label>Invoice email (deprecated)</label>
+                                    <label>Invoice email</label>
                                     <frontend_type>select</frontend_type>
                                     <tooltip>Enable/Disable update mails to customers.</tooltip>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -416,16 +427,6 @@
                             <sort_order>40</sort_order>
                             <frontend_model>adyen/adminhtml_system_config_fieldset_expanded</frontend_model>
                             <fields>
-                                <notification_hmac>
-                                    <label>Notification HMAC Key</label>
-                                    <tooltip>This is not required and should be left empty by default. You can use this as extra security, or if you do not want to use HTTP authentication. If the latter is the case, leave notification user name and password in 'Required Settings' empty and only use this key. Key can be generated at Adyen Customer Area => Server Communication => Standard Notification => Additional Settings => Generate new HMAC key</tooltip>
-                                    <frontend_type>text</frontend_type>
-                                    <config_path>payment/adyen_abstract/notification_hmac</config_path>
-                                    <sort_order>77</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </notification_hmac>
                                 <ignore_refund_notification>
                                     <label>Ignore refund notification</label>
                                     <tooltip>If the refund is done on the Adyen Platform it will send a refund notification to Magento which automatically creates a credit memo. If you set this setting to 'Yes', this will not happen because it will not process any of the REFUND notification that is received.</tooltip>
@@ -822,6 +823,17 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </installments_hipercard>
+                                <disable_zero_total>
+                                    <label>Disable at zero grand total</label>
+                                    <tooltip>Disable this payment method in the checkout when the grand total of the quote is 0.</tooltip>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <config_path>payment/adyen_cc/disable_zero_total</config_path>
+                                    <sort_order>220</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </disable_zero_total>
                             </fields>
                         </adyen_cc_advanced>
                     </fields>
@@ -831,6 +843,8 @@
                     <frontend_type>text</frontend_type>
                     <comment><![CDATA[
                                 During checkout shoppers can choose to have their payment details remembered and stored for trusted websites in Adyen’s highly secure platform. Adyen takes care of this process for its customers. Shoppers can then select in the Magento checkout the saved card and checkout with ‘OneClick’.
+                                <br />
+                                <b>Make sure you have turned on RECURRING_CONTRACT notification on your merchantAccount. If you want to add this or if you are not sure, just send us an <a href="mailto:magento@adyen.com">email</a>.</b>
                             ]]></comment>
                     <sort_order>320</sort_order>
                     <show_in_default>1</show_in_default>
@@ -875,7 +889,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <tooltip>With ONECLICK the shopper needs to fill in their security code for credit cards. For RECURRING, this is not needed. If you want to use RECURRING make sure you have Agreement Type set to RECURRING or ONECLICK,RECURRING</tooltip>
+                            <tooltip>With ONECLICK the shopper needs to fill in their security code for credit cards. For RECURRING, this is not needed. If you want to use RECURRING make sure you have Agreement Type set to RECURRING or ONECLICK,RECURRING. In the Backend always recurring is used because OneClick could trigger 3D secure.</tooltip>
                         </recurring_payment_type>
                     </fields>
                 </adyen_oneclick>
@@ -919,7 +933,7 @@
                         </skinCode>
                         <secret_wordt translate="label">
                             <label>HMAC Key for Test</label>
-                            <tooltip>Copy and paste the HMAC key of the skin you want to use from Test Customer Area => Skins. => click on [skin code] => Edit => HMAC for Test platform. Currently, only the older SHA-1 HMAC calculation method is supported in this plugin.</tooltip>
+                            <tooltip>Copy and paste the HMAC key of the skin you want to use from Test Customer Area => Skins. => click on [skin code] => Edit => HMAC for Test platform. Only the SHA-256 HMAC calculation method is supported in this plugin. SHA-1 is deprecate and will not be supported by Adyen.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -928,7 +942,7 @@
                         </secret_wordt>
                         <secret_wordp translate="label">
                             <label>HMAC Key for Live</label>
-                            <tooltip>Copy and paste the HMAC key of the skin you want to use from Test Customer Area => Skins. => click on [skin code] => Edit => HMAC for Live platform. Currently, only the older SHA-1 HMAC calculation method is supported in this plugin.</tooltip>
+                            <tooltip>Copy and paste the HMAC key of the skin you want to use from Test Customer Area => Skins. => click on [skin code] => Edit => HMAC for Live platform. Only the SHA-256 HMAC calculation method is supported in this plugin. SHA-1 is deprecate and will not be supported by Adyen.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
@@ -998,6 +1012,17 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </return_url_in_request>
+                                <disable_zero_total>
+                                    <label>Disable at zero grand total</label>
+                                    <tooltip>Disable this payment method in the checkout when the grand total of the quote is 0.</tooltip>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <config_path>payment/adyen_hpp/disable_zero_total</config_path>
+                                    <sort_order>120</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </disable_zero_total>
                             </fields>
                         </adyen_hpp_advanced>
                     </fields>
@@ -1219,7 +1244,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adyen/source_SepaFlow</source_model>
                             <sort_order>35</sort_order>
-                            <tooltip>If you are not sure just leave it at 'Sale’. If you want to enable 'Auth/Capt' for SEPA Direct Debit, please contact support@adyen.com</tooltip>
+                            <tooltip>If you are not sure just leave it at 'Sale’. Sale means it is always immidiate capture with auth/cap it will follow the Capture Delay. If you want to enable 'Auth/Capt' for SEPA Direct Debit, please contact support@adyen.com</tooltip>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1459,16 +1484,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </express_checkout>
-                        <express_checkout_redirect_connect>
-                            <label>Redirect direct</label>
-                            <tooltip>Redirect directly to the Adyen app to do the PIN payment. This is not supported for all browsers if you have problems set this setting to false</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>38</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </express_checkout_redirect_connect>
                         <express_checkout_kiosk_mode>
                             <label>Kiosk mode</label>
                             <tooltip>If you turn kiosk modus on it will not auto-complete the customers based on the filled in email address</tooltip>

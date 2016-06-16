@@ -32,22 +32,25 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_Tax_PaymentFee extends Mage_Sale
 
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
+        // Makes sure you only use the address type shipping
+        $items = $this->_getAddressItems($address);
+        if (!count($items)) {
+            return $this;
+        }
+
+        // reset totals by default (needed for some external checkout modules)
+        $address->setPaymentFeeTax(0);
+        $address->setBasePaymentFeeTax(0);
+
         if ($address->getQuote()->getId() == NULL) {
             return $this;
         }
 
         if (!$address->getPaymentFeeAmount()) {
-            $address->setPaymentFeeTax(0);
-            $address->setBasePaymentFeeTax(0);
             return $this;
         }
 
         $items = $address->getAllItems();
-        if (!count($items)) {
-            return $this;
-        }
-
-        $items = $this->_getAddressItems($address);
         if (!count($items)) {
             return $this;
         }
